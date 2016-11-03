@@ -29,10 +29,7 @@ app.get('/data/' + apiVersion + '/:id', function(req, res) {
   fs.stat(absPath, function(err) {
     res.setHeader('content-type', 'application/json');
     if(err) {
-      return res.status(404)
-              .json({
-                'result': 'Data was not found'
-              }).end();
+      return response(res, 404, {'result': 'Data was not found'});
     }
     fs.createReadStream(absPath).pipe(res);
   });
@@ -48,18 +45,12 @@ app.get('/data/' + apiVersion, function(req, res) {
     res.setHeader('content-type', 'application/json');
 
     if(err) {
-      return res.status(404)
-              .json({
-                'result': 'Data was not found'
-              }).end();
+      return response(res, 404, {'result': 'Data was not found'});
     }
 
     fs.readdir(absPath, function(err, data) {
       if(err) {
-        return res.status(404)
-                .json({
-                  'result': 'Error durring preparing response'
-                }).end();
+        return response(res, 404, {'result': 'Error durring preparing response'});
       }
 
       var result = [];
@@ -96,20 +87,13 @@ app.post('/data/' + apiVersion + '/:id', function(req, res) {
     if(err) {
       fs.writeFile(absPath, JSON.stringify(req.body), function(err) {
         if(err) {
-          return res.status(500).json({
-                "err": err
-                  }).end();
+          return response(res, 500, {"err": err});
         } else {
-          return res.status(200)
-                    .json({'status': 'success'})
-                    .end();
+          return response(res, 200, {'status': 'success'});
         }
       });
     } else {
-      return res.status(409)
-              .json({
-                'status': 'not applied'
-              }).end();
+      return response(res, 409, {'status': 'not applied'});
     }
   });
 });
@@ -124,21 +108,17 @@ app.put('/data/' + apiVersion + '/:id', function(req, res) {
     res.setHeader('content-type', 'application/json');
 
     if(err) {
-      return res.status(404).json({
+      return response(res, 404, {
         "status": "not applied",
         "err": err
-      }).end();
+      });
     }
 
     fs.writeFile(absPath, JSON.stringify(req.body), {'flag':'w'}, function(err) {
       if(err) {
-        return res.status(500).json({
-              "err": err
-            }).end();
+        return response(res, 500, {"err": err});
       } else {
-        return res.status(200)
-                  .json({'status': 'success'})
-                  .end();
+        return response(res, 200, {'status': 'success'});
       }
     });
   });
@@ -153,14 +133,16 @@ app.delete('/data/' + apiVersion + '/:id', function(req, res) {
   fs.unlink(absPath, function(err) {
     res.setHeader('content-type', 'application/json');
     if(err) {
-      return res.status(404).json({
+      return response(res, 404, {
         "status": "not applied",
         "err": err
-      }).end();
+      });
     } else {
-      return res.status(200).json({
-        "status": "success"
-      }).end();
+      return response(res, 200, {'status': 'success'});
     }
   });
 });
+
+function response(res, status, json) {
+  return res.status(status).json(json).end();
+}
