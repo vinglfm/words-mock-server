@@ -5,7 +5,7 @@ var fs = require('fs');
 var path = require('path');
 var app = express();
 
-app.set('port', 5001);
+app.set('port', process.env.PORT || 5001);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
