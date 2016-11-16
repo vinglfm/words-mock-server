@@ -16,13 +16,13 @@ app.listen(app.get('port'), function() {
 });
 
 app.get('/', function(req, res) {
-  res.send('<html><body><h1>Words mock server http API! Version ' + apiVersion + '</h1></body></html>');
+  res.send('<html><body><h1>Words mock server http API! </h1></body></html>');
 });
 
 app.get('/data/:category', function(req, res) {
   console.log(req.method, req.path);
 
-  var name = req.path.replace('/' + apiVersion + '/', '/').concat('.json');
+  var name = req.path.concat('.json');
   var absPath = path.join(__dirname, name);
 
   fs.stat(absPath, function(err) {
