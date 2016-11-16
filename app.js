@@ -1,6 +1,5 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var apiVersion = require('./package').version;
 var fs = require('fs');
 var path = require('path');
 var app = express();
@@ -20,7 +19,7 @@ app.get('/', function(req, res) {
   res.send('<html><body><h1>Words mock server http API! Version ' + apiVersion + '</h1></body></html>');
 });
 
-app.get('/data/' + apiVersion + '/:id', function(req, res) {
+app.get('/data/:category', function(req, res) {
   console.log(req.method, req.path);
 
   var name = req.path.replace('/' + apiVersion + '/', '/').concat('.json');
@@ -35,10 +34,10 @@ app.get('/data/' + apiVersion + '/:id', function(req, res) {
   });
 });
 
-app.get('/data/' + apiVersion, function(req, res) {
+app.get('/data', function(req, res) {
   console.log(req.method, req.path);
 
-  var name = req.path.replace('/' + apiVersion + '/', '/');
+  var name = req.path;
   var absPath = path.join(__dirname, name);
 
   fs.stat(absPath, function(err) {
@@ -75,10 +74,10 @@ app.get('/data/' + apiVersion, function(req, res) {
 
 });
 
-app.post('/data/' + apiVersion + '/:id', function(req, res) {
+app.post('/data/:category', function(req, res) {
   console.log(req.method, req.path);
 
-  var name = req.path.replace('/' + apiVersion + '/', '/').concat('.json');
+  var name = req.path.concat('.json');
   var absPath = path.join(__dirname, name);
 
   fs.stat(absPath, function(err) {
@@ -98,10 +97,10 @@ app.post('/data/' + apiVersion + '/:id', function(req, res) {
   });
 });
 
-app.put('/data/' + apiVersion + '/:id', function(req, res) {
+app.put('/data/:category', function(req, res) {
   console.log(req.method, req.path);
 
-  var name = req.path.replace('/' + apiVersion + '/', '/').concat('.json');
+  var name = req.concat('.json');
   var absPath = path.join(__dirname, name);
 
   fs.stat(absPath, function(err) {
@@ -124,10 +123,10 @@ app.put('/data/' + apiVersion + '/:id', function(req, res) {
   });
 });
 
-app.delete('/data/' + apiVersion + '/:id', function(req, res) {
+app.delete('/data/:category', function(req, res) {
   console.log(req.method, req.path);
 
-  var name = req.path.replace('/' + apiVersion + '/', '/').concat('.json');
+  var name = 'data/' + req.params.category.concat('.json');
   var absPath = path.join(__dirname, name);
 
   fs.unlink(absPath, function(err) {
