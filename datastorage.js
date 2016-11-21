@@ -4,36 +4,29 @@ var fs = Promise.promisifyAll(require('fs'))
 
 var data = ['{}']
 
-var getAllWordsOfCategory = function(category) {
+module.exports = {
+
+readCategoryWords : function(category) {
   var directory = DATADIR+category
+
+  if (category === 'default') {
+    console.log('inside if')
+      category = DATADIR
+  }
+
   var promises = [];
+
+  var readFile = function(path) {
+    return fs.readFileAsync(path, 'utf-8')
+  }
+
 var i = 0;
   promises = fs.readdirAsync(directory).map(function(filename) {
+    console.log('reading data from file:' + filename)
     return readFile(directory + '/' + filename)
   })
 
   return Promise.all(promises)
 }
 
-
-var readFile = function(path) {
-  return fs.readFileAsync(path, 'utf-8')
 }
-
-var onFileContent = function(content) {
-  data.push(content)
-}
-
-var onError = function(err) {
-  console.log(JSON.stringify(err))
-}
-
-
-getAllWordsOfCategory('').then(function(filesContent) {
-  filesContent.forEach(function(content){
-    console.log(content);
-  },
-  function(err) {
-    console.log(err);
-  })
-})

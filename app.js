@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var apiVersion = require('./package').version;
 var fs = require('fs');
+var wordService = require('./datastorage.js')
 var path = require('path');
 var app = express();
 var DATADIR = 'data/'
@@ -36,7 +37,19 @@ app.get('/data/' + apiVersion + '/:id', function(req, res) {
   });
 });
 
-app.get('/data/' + apiVersion, function(req, res) {
+app.get('/data/:category', function(req, res) {
+  console.log(req.method, req.path)
+  console.log('Retrieving data for ' + req.params.category)
+  wordService.readCategoryWords(req.params.category).then(
+    function(filesArray) {
+      response(res, 200, JSON.stringify(filesArray))
+    },
+    function(err) {
+      response(res, 404, {'result': 'Data was not found'})
+    })
+})
+
+app.get('/data/', function(req, res) {
   console.log(req.method, req.path);
 
   var name = req.path.replace('/' + apiVersion + '/', '/');
@@ -76,8 +89,10 @@ app.get('/data/' + apiVersion, function(req, res) {
 
 });
 
-app.post('/data/' + apiVersion + '/:category', function(req, res) {
+app.post('/data/:category', function(req, res) {
   console.log(req.method, req.path);
+
+
 
   var name = DATADIR + req.params.category + '.json';
   var absPath = path.join(__dirname, name);
