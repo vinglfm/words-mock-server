@@ -86,30 +86,20 @@ app.get('/data/', function(req, res) {
 
 });
 
-app.post('/data/:category', function(req, res) {
-  console.log(req.method, req.path);
+app.post('/data/:category', function(req,res) {
+  console.log(req.body)
+  console.log(req.params.category)
+  wordService.addWordsToCategory(req.params.category, req.body).then(
 
+    function() {
+      response(res, 200, {"status":'success'})
+    },
 
-
-  var name = DATADIR + req.params.category + '.json';
-  var absPath = path.join(__dirname, name);
-
-  fs.stat(absPath, function(err) {
-    res.setHeader('content-type', 'application/json');
-
-    if(err) {
-      fs.writeFile(absPath, JSON.stringify(req.body), function(err) {
-        if(err) {
-          return response(res, 500, {"err": err});
-        } else {
-          return response(res, 200, {'status': 'success'});
-        }
-      });
-    } else {
-      return response(res, 409, {'status': 'not applied'});
+    function(err) {
+      response(res, 409, {"status" : "not applied"})
     }
-  });
-});
+  )
+})
 
 app.put('/data/' + apiVersion + '/:id', function(req, res) {
   console.log(req.method, req.path);

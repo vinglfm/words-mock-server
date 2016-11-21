@@ -9,6 +9,7 @@
     "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "fs-extra": "^1.0.0",
     "underscore": "^1.8.3"
   },
   "scripts": {

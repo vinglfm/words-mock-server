@@ -1,6 +1,6 @@
 var DATADIR = __dirname + '/data/'
 var Promise = require('bluebird')
-var fs = Promise.promisifyAll(require('fs'))
+var fs = Promise.promisifyAll(require('fs-extra'))
 
 var data = ['{}']
 
@@ -35,16 +35,23 @@ readWordFromCategory : function(category, word) {
 },
 
 addWordsToCategory : function(category, words) {
-  words.forEach( function(word) {
-      var path = DATADIR + category + '/' + JSON.parse(word).word + '.json'
-      fs.openAsync(path, 'w+').then(function(fd) {
-        fs.write( fd, 'string to append to file', null, 'utf8', function() {
+  return Promise.all(words.map( function(word) {
+    console.log(word)
+    console.log(word.word)
+      var dir = DATADIR + category
+      var file  = '/' + word.word + '.json'
+
+      fs.ensureDir(dir, function(err) {
+        console.log(err)
+      })
+
+    return  fs.openAsync(dir + file, 'w+').then(function(fd) {
+        fs.write( fd, JSON.stringify(word), null, 'utf8', function() {
         fs.close(fd, function() {
           console.log('file closed');
         });
       })
   })
   })
-}
-
+)}
 }
