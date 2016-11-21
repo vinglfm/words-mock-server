@@ -22,20 +22,15 @@ app.get('/', function(req, res) {
   res.send('<html><body><h1>Words mock server http API! Version ' + apiVersion + '</h1></body></html>');
 });
 
-app.get('/data/' + apiVersion + '/:id', function(req, res) {
-  console.log(req.method, req.path);
-
-  var name = req.path.replace('/' + apiVersion + '/', '/').concat('.json');
-  var absPath = path.join(__dirname, name);
-
-  fs.stat(absPath, function(err) {
-    res.setHeader('content-type', 'application/json');
-    if(err) {
-      return response(res, 404, {'result': 'Data was not found'});
-    }
-    fs.createReadStream(absPath).pipe(res);
-  });
-});
+app.get('/data/:category/:word', function(req, res) {
+  console.log('Lookign for a word' + req.params.word + ' from category ' + req.params.category)
+  wordService.readWordFromCategory(req.params.category, req.params.word).then(function(word) {
+    response(res, 200, word)
+  },
+  function(err) {
+    response(res, 404, {'result':'category or word doesn`t exist in dictionary'})
+  })
+})
 
 app.get('/data/:category', function(req, res) {
   console.log(req.method, req.path)
@@ -45,7 +40,9 @@ app.get('/data/:category', function(req, res) {
       response(res, 200, JSON.stringify(filesArray))
     },
     function(err) {
-      response(res, 404, {'result': 'Data was not found'})
+      if (err.code === 'ENOENT') {
+        response(res, 404, {'result': 'Data was not found', 'err' : err})
+      }
     })
 })
 

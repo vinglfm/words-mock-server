@@ -20,13 +20,31 @@ readCategoryWords : function(category) {
     return fs.readFileAsync(path, 'utf-8')
   }
 
-var i = 0;
   promises = fs.readdirAsync(directory).map(function(filename) {
     console.log('reading data from file:' + filename)
     return readFile(directory + '/' + filename)
   })
 
   return Promise.all(promises)
+},
+
+readWordFromCategory : function(category, word) {
+  var path = DATADIR + category + '/' + word + '.json'
+  console.log('Reading word using path: ' + path)
+  return fs.readFileAsync(path, 'utf-8')
+},
+
+addWordsToCategory : function(category, words) {
+  words.forEach( function(word) {
+      var path = DATADIR + category + '/' + JSON.parse(word).word + '.json'
+      fs.openAsync(path, 'w+').then(function(fd) {
+        fs.write( fd, 'string to append to file', null, 'utf8', function() {
+        fs.close(fd, function() {
+          console.log('file closed');
+        });
+      })
+  })
+  })
 }
 
 }
