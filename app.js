@@ -87,8 +87,6 @@ app.get('/data/', function(req, res) {
 });
 
 app.post('/data/:category', function(req,res) {
-  console.log(req.body)
-  console.log(req.params.category)
   wordService.addWordsToCategory(req.params.category, req.body).then(
 
     function() {
@@ -96,6 +94,7 @@ app.post('/data/:category', function(req,res) {
     },
 
     function(err) {
+      console.log(err)
       response(res, 409, {"status" : "not applied"})
     }
   )
@@ -127,24 +126,29 @@ app.put('/data/' + apiVersion + '/:id', function(req, res) {
   });
 });
 
-app.delete('/data/' + apiVersion + '/:id', function(req, res) {
-  console.log(req.method, req.path);
-
-  var name = req.path.replace('/' + apiVersion + '/', '/').concat('.json');
-  var absPath = path.join(__dirname, name);
-
-  fs.unlink(absPath, function(err) {
-    res.setHeader('content-type', 'application/json');
-    if(err) {
-      return response(res, 404, {
-        "status": "not applied",
-        "err": err
-      });
-    } else {
-      return response(res, 200, {'status': 'success'});
+app.delete('/data/:category', function(req, res) {
+  wordService.deleteCategory(req.params.category,
+    function(err) {
+      if (err) {
+        response(res, 404, {'status':'not applied'})
+      } else {
+        response(res, 200, {'status':'success'} )
+      }
     }
-  });
+  )
 });
+
+app.delete('/data/:category/:word', function(req, resp) {
+  wordService.deleteWord(req.params.category, req.params.word, function(err) {
+    if (err) {
+      response(resp, 404, {'status':'not applied'})
+    } else {
+      response(resp, 200, {'status':'success'})
+    }
+
+  })
+})
+
 
 function response(res, status, json) {
   return res.status(status).json(json);

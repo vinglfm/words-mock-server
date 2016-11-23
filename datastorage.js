@@ -1,4 +1,5 @@
 var DATADIR = __dirname + '/data/'
+var rmdir = require('rimraf');
 var Promise = require('bluebird')
 var fs = Promise.promisifyAll(require('fs-extra'))
 
@@ -36,8 +37,6 @@ readWordFromCategory : function(category, word) {
 
 addWordsToCategory : function(category, words) {
   return Promise.all(words.map( function(word) {
-    console.log(word)
-    console.log(word.word)
       var dir = DATADIR + category
       var file  = '/' + word.word + '.json'
 
@@ -53,5 +52,18 @@ addWordsToCategory : function(category, words) {
       })
   })
   })
-)}
+)},
+
+deleteCategory : function(category, errorHandler) {
+    var directory = DATADIR + category
+    rmdir(directory, errorHandler)
+},
+
+deleteWord : function(category, word, errorHandler) {
+  var path = DATADIR + category + '/' + word + '.json'
+
+  fs.unlink(path, errorHandler)
+}
+
+
 }
