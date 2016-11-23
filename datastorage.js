@@ -45,7 +45,7 @@ addWordsToCategory : function(category, words) {
       })
 
     return  fs.openAsync(dir + file, 'w+').then(function(fd) {
-        fs.write( fd, JSON.stringify(word), null, 'utf8', function() {
+        fs.write(fd, JSON.stringify(word), null, 'utf8', function() {
         fs.close(fd, function() {
           console.log('file closed');
         });
@@ -63,6 +63,19 @@ deleteWord : function(category, word, errorHandler) {
   var path = DATADIR + category + '/' + word + '.json'
 
   fs.unlink(path, errorHandler)
+},
+
+updateWord : function(category, word, update) {
+  console.log(update);
+  var path = DATADIR + category + '/' + word + '.json';
+
+  fs.openAsync(path, 'w+').then(function(fd) {
+     fs.write( fd, JSON.stringify(update), null, 'utf8', function() {
+     fs.close(fd, function() {
+       console.log('file closed');
+     });
+   })
+})
 }
 
 

@@ -100,30 +100,10 @@ app.post('/data/:category', function(req,res) {
   )
 })
 
-app.put('/data/' + apiVersion + '/:id', function(req, res) {
-  console.log(req.method, req.path);
-
-  var name = req.path.replace('/' + apiVersion + '/', '/').concat('.json');
-  var absPath = path.join(__dirname, name);
-
-  fs.stat(absPath, function(err) {
-    res.setHeader('content-type', 'application/json');
-
-    if(err) {
-      return response(res, 404, {
-        "status": "not applied",
-        "err": err
-      });
-    }
-
-    fs.writeFile(absPath, JSON.stringify(req.body), {'flag':'w'}, function(err) {
-      if(err) {
-        return response(res, 500, {"err": err});
-      } else {
-        return response(res, 200, {'status': 'success'});
-      }
-    });
-  });
+app.put('/data/:category/:word', function(req, res) {
+  //TODO: add error handling here
+  wordService.updateWord(req.params.category, req.params.word, req.body);
+  response(res, 200, {'status':'success'})
 });
 
 app.delete('/data/:category', function(req, res) {
