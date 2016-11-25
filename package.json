@@ -9,7 +9,30 @@
     "body-parser": "^1.15.2",
     "express": "^4.14.0"
   },
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.10.2"
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": [
+      "eslint:recommended"
+    ],
+    "globals": {
+      "require": true,
+      "process": true,
+      "__dirname": true
+    },
+    "rules": {
+      "no-console": 0
+    },
+    "env": {
+      "browser": true,
+      "jasmine": true
+    }
+  },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "style": "eslint data app.js"
   }
 }
